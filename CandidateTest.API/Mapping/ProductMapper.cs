@@ -40,7 +40,6 @@ namespace CandidateTest.API.ProductMapper
             entity.Price = dto.Price;
             entity.Description = dto.Description;
             entity.StockQuantity = dto.StockQuantity;
-            // entity.UpdatedAt = DateTime.UtcNow; // ako uvedeš kolonu
         }
     }
 }

@@ -16,7 +16,9 @@ namespace CandidateTest.WinForms
     {
         private readonly ProductApiService _apiService;
         private List<ProductDto> _products = new List<ProductDto>();
-
+        private int _page = 1;
+        private int _pageSize = 10;   
+        private int _total = 0;
         public ProductsForm()
         {
             InitializeComponent();
@@ -28,7 +30,24 @@ namespace CandidateTest.WinForms
             btnCreate.Click += BtnCreate_Click;
             btnUpdate.Click += BtnUpdate_Click;
             btnDelete.Click += BtnDelete_Click;
+            btnPrev.Click += BtnPrev_Click;
+            btnNext.Click += BtnNext_Click;
+
             this.Load += ProductsForm_Load;
+        }
+        private async void BtnPrev_Click(object sender, EventArgs e)
+        {
+            if (_page > 1)
+            {
+                _page--;
+                await RefreshProducts();
+            }
+        }
+
+        private async void BtnNext_Click(object sender, EventArgs e)
+        {
+            _page++;
+            await RefreshProducts();
         }
 
         private async void ProductsForm_Load(object sender, EventArgs e)
@@ -43,10 +62,27 @@ namespace CandidateTest.WinForms
 
         private async Task RefreshProducts()
         {
-            _products = await _apiService.GetAllAsync();
+            var (items, total) = await _apiService.GetPagedAsync(
+                page: _page,
+                pageSize: _pageSize,
+                name: null,
+                minPrice: null,
+                maxPrice: null,
+                categoryIds: null
+            );
+
+            _products = items;
+            _total = total;
+
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = _products;
             dataGridView1.ClearSelection();
+
+            var maxPage = Math.Max(1, (int)Math.Ceiling((double)_total / _pageSize));
+            lblPageInfo.Text = $"Page: {_page} / {maxPage}   Total: {_total}";
+
+            btnPrev.Enabled = _page > 1;
+            btnNext.Enabled = _page < maxPage;
         }
         private void ClearInputs()
         {
@@ -63,7 +99,7 @@ namespace CandidateTest.WinForms
                 StockQuantity = int.TryParse(txtQuantity.Text, out var q) ? q : 0
             };
             await _apiService.CreateAsync(create);
-            ClearInputs();
+            _page = 1;
             await RefreshProducts();
         }
 
@@ -81,6 +117,7 @@ namespace CandidateTest.WinForms
                 StockQuantity = int.TryParse(txtQuantity.Text, out var q2) ? q2 : 0
             };
             await _apiService.UpdateAsync(selected.ProductId, update);
+            _page = 1;
             await RefreshProducts();
         }
 
@@ -91,7 +128,7 @@ namespace CandidateTest.WinForms
             var selected = (ProductDto)dataGridView1.CurrentRow.DataBoundItem;
 
             await _apiService.DeleteAsync(selected.ProductId);
-            ClearInputs();
+            _page = 1;
             await RefreshProducts();
         }
 

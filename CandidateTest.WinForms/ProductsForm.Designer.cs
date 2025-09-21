@@ -14,6 +14,10 @@ namespace CandidateTest.WinForms
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnPrev;
+        private System.Windows.Forms.Button btnNext;
+        private System.Windows.Forms.Label lblPageInfo;
+
 
         private void InitializeComponent()
         {
@@ -57,8 +61,25 @@ namespace CandidateTest.WinForms
 
             this.btnRefresh.Location = new System.Drawing.Point(150, 310);
             this.btnRefresh.Text = "Refresh";
-            // Event handler-e se registruju u ProductsForm.cs konstruktoru
+            // --- PAGINATION UI ---
+            this.btnPrev = new System.Windows.Forms.Button();
+            this.btnNext = new System.Windows.Forms.Button();
+            this.lblPageInfo = new System.Windows.Forms.Label();
 
+            // btnPrev
+            this.btnPrev.Location = new System.Drawing.Point(12, 340);
+            this.btnPrev.Size = new System.Drawing.Size(60, 25);
+            this.btnPrev.Text = "< Prev";
+
+            // btnNext
+            this.btnNext.Location = new System.Drawing.Point(78, 340);
+            this.btnNext.Size = new System.Drawing.Size(60, 25);
+            this.btnNext.Text = "Next >";
+
+            // lblPageInfo
+            this.lblPageInfo.Location = new System.Drawing.Point(150, 343);
+            this.lblPageInfo.AutoSize = true;
+            this.lblPageInfo.Text = "Page 1";
             // 
             // ProductsForm
             // 
@@ -72,6 +93,9 @@ namespace CandidateTest.WinForms
             this.Controls.Add(this.btnUpdate);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnRefresh);
+            this.Controls.Add(this.btnPrev);
+            this.Controls.Add(this.btnNext);
+            this.Controls.Add(this.lblPageInfo);
             this.Text = "Products CRUD";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
